@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Splitter</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0d0d;color:#e0e0e0;font-family:Segoe UI,system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
+h1{font-size:1.3rem;font-weight:400;margin-bottom:4px}
+.sub{color:#888;font-size:.82rem;margin-bottom:20px}
+.dropzone{width:100%;max-width:560px;border:2px dashed #444;border-radius:12px;padding:40px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:10px}
+.dropzone:hover,.dropzone.drag-over{border-color:#7c5cfc;background:#1a1a2e}
+.dropzone .icon{font-size:2.2rem;margin-bottom:8px}
+.dropzone .hint{color:#aaa;font-size:.85rem}
+.dropzone .hint span{color:#7c5cfc}
+.controls{display:flex;gap:12px;align-items:center;margin:10px 0;flex-wrap:wrap;justify-content:center;font-size:.8rem}
+.mode-btn{padding:6px 16px;border:1px solid #555;background:#1a1a1a;color:#888;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s}
+.mode-btn.active{background:#7c5cfc;color:#fff;border-color:#7c5cfc}
+.mode-btn:hover:not(.active){border-color:#7c5cfc;color:#ccc}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:720px;margin-top:8px}
+.tile{background:#1a1a1a;border:1px solid #333;border-radius:10px;overflow:hidden;text-align:center;padding-bottom:10px}
+.tile img{width:100%;display:block}
+.tile .label{font-size:.75rem;color:#aaa;margin:6px 0 4px}
+.tile .ctrl{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;padding:0 8px}
+.tile .ctrl button{background:#2a2a2a;border:1px solid #444;color:#aaa;font-size:.68rem;padding:3px 8px;cursor:pointer;border-radius:3px;min-width:26px}
+.tile .ctrl button:hover{background:#444;color:#fff}
+.tile .ctrl .dl-btn{background:#7c5cfc;border-color:#7c5cfc;color:#fff}
+.tile .ctrl .dl-btn:hover{background:#9370ff}
+.info{color:#888;font-size:.78rem;margin:8px 0;text-align:center}
+.reset-btn{margin-top:20px;background:#333;color:#ccc;border:1px solid #555;padding:7px 20px;border-radius:6px;cursor:pointer;font-size:.82rem}
+input[type=file]{display:none}
+.nudge-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;margin:2px auto;width:75px}
+</style>
+</head>
+<body>
+
+<h1>✂️ Image Splitter</h1>
+<p class="sub">2×2 Equal · 2×3 Equal · 3×2 Equal · Nudge · Zoom · Flip</p>
+
+<div class="dropzone" id="zone">
+  <div class="icon">🖼️</div>
+  <div class="hint">Drop image or <span>click to browse</span></div>
+</div>
+<input type="file" id="fileIn" accept="image/*">
+
+<div class="controls">
+  <button class="mode-btn active" data-mode="2x2">◨ 2×2 Equal</button>
+  <button class="mode-btn" data-mode="2x3">▦ 2×3 Auto</button>
+  <button class="mode-btn" data-mode="3x2">▤ 3×2 Equal</button>
+  <label style="display:flex;align-items:center;gap:4px;color:#ccc;cursor:pointer">
+    <input type="checkbox" id="ctrCb" style="accent-color:#7c5cfc"> 📐 Center
+  </label>
+  <label style="display:flex;align-items:center;gap:4px;color:#888">
+    Tol <input type="range" id="tolSl" min="5" max="80" value="30" style="width:60px;accent-color:#7c5cfc"> <span id="tolV">30</span>
+  </label>
+  <label style="display:flex;align-items:center;gap:4px;color:#888">
+    Pad <input type="range" id="padSl" min="0" max="60" value="10" style="width:60px;accent-color:#7c5cfc"> <span id="padV">10</span>
+  </label>
+  <label style="display:flex;align-items:center;gap:4px;color:#888">
+    Step <input type="range" id="stepSl" min="1" max="20" value="5" style="width:60px;accent-color:#7c5cfc"> <span id="stepV">5</span>px
+  </label>
+</div>
+
+<p class="info" id="info"></p>
+<div class="grid" id="grid"></div>
+<button class="reset-btn" onclick="resetAll()">🔄 Start Over</button>
+
+<script>
+// ── DOM refs ──
+const zone = document.getElementById('zone');
+const fileIn = document.getElementById('fileIn');
+const grid = document.getElementById('grid');
+const info = document.getElementById('info');
+const ctrCb = document.getElementById('ctrCb');
+const tolSl = document.getElementById('tolSl');
+const tolV = document.getElementById('tolV');
+const padSl = document.getElementById('padSl');
+const padV = document.getElementById('padV');
+const stepSl = document.getElementById('stepSl');
+const stepV = document.getElementById('stepV');
+const modeBtns = document.querySelectorAll('.mode-btn');
+
+let curImg = null, curName = '';
+
+// ── Mode ──
+function getMode() {
+  return document.querySelector('.mode-btn.active').dataset.mode;
+}
+modeBtns.forEach(b => b.addEventListener('click', function() {
+  modeBtns.forEach(x => x.classList.remove('active'));
+  this.classList.add('active');
+  if (curImg) split(curImg, curName);
+}));
+
+// ── Sliders ──
+[tolSl, padSl, stepSl].forEach(s => s.addEventListener('input', function() {
+  if (this === tolSl) tolV.textContent = this.value;
+  if (this === padSl) padV.textContent = this.value;
+  if (this === stepSl) stepV.textContent = this.value;
+  if (curImg) split(curImg, curName);
+}));
+ctrCb.addEventListener('change', () => { if (curImg) split(curImg, curName); });
+
+// ── Drop ──
+zone.addEventListener('click', () => fileIn.click());
+fileIn.addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadFile(f);
+});
+
+function loadFile(f) {
+  const r = new FileReader();
+  r.onload = function(e) {
+    const img = new Image();
+    img.onload = function() { split(img, f.name); };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
+// ── Center content ──
+function centerContent(srcC, dstC) {
+  const w=srcC.width, h=srcC.height;
+  const p=srcC.getContext('2d').getImageData(0,0,w,h).data;
+  const tol=parseInt(tolSl.value);
+  const get=(x,y)=>{const i=(y*w+x)*4;return[p[i],p[i+1],p[i+2]];};
+  const cn=[get(0,0),get(w-1,0),get(0,h-1),get(w-1,h-1)];
+  const bR=Math.round(cn.reduce((s,v)=>s+v[0],0)/4);
+  const bG=Math.round(cn.reduce((s,v)=>s+v[1],0)/4);
+  const bB=Math.round(cn.reduce((s,v)=>s+v[2],0)/4);
+  const isBg=i=>Math.abs(p[i]-bR)<=tol&&Math.abs(p[i+1]-bG)<=tol&&Math.abs(p[i+2]-bB)<=tol;
+
+  let l=w,r=0,t=h,b=0;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(!isBg((y*w+x)*4)){if(x<l)l=x;if(x>r)r=x;if(y<t)t=y;if(y>b)b=y;}
+  if(l>r){dstC.getContext('2d').drawImage(srcC,0,0);return{ctr:false};}
+
+  const cw=r-l+1, ch=b-t+1;
+  const tmp=document.createElement('canvas');tmp.width=cw;tmp.height=ch;
+  tmp.getContext('2d').drawImage(srcC,l,t,cw,ch,0,0,cw,ch);
+  const dx=Math.floor((w-cw)/2), dy=Math.floor((h-ch)/2);
+  const dc=dstC.getContext('2d');
+  dc.clearRect(0,0,w,h);
+  dc.fillStyle=`rgb(${bR},${bG},${bB})`;dc.fillRect(0,0,w,h);
+  dc.drawImage(tmp,dx,dy);
+  return{ctr:true,bw:cw,bh:ch};
+}
+
+// ── Main split ──
+function split(img, name) {
+  curImg=img; curName=name;
+  const mode=getMode(), pad=parseInt(padSl.value), base=name.replace(/\.[^.]+$/,'');
+  const W=img.naturalWidth, H=img.naturalHeight;
+  let cells;
+
+  if (mode==='2x3') {
+    const hw=Math.floor(W/2), hh=Math.floor(H/3);
+    cells=[
+      {sx:0,sy:0,sw:hw,sh:hh,label:'↖ TL'},{sx:hw,sy:0,sw:W-hw,sh:hh,label:'↗ TR'},
+      {sx:0,sy:hh,sw:hw,sh:hh,label:'← ML'},{sx:hw,sy:hh,sw:W-hw,sh:hh,label:'→ MR'},
+      {sx:0,sy:hh*2,sw:hw,sh:H-hh*2,label:'↙ BL'},{sx:hw,sy:hh*2,sw:W-hw,sh:H-hh*2,label:'↘ BR'}
+    ];
+    info.textContent=`[2×3 Equal] ${W}×${H} → 6 tiles ~${hw}×${hh}`;
+  } else if (mode==='3x2') {
+    const tw=Math.floor(W/3), th=Math.floor(H/2);
+    cells=[
+      {sx:0,sy:0,sw:tw,sh:th,label:'⬉ L'},{sx:tw,sy:0,sw:tw,sh:th,label:'▲ C'},{sx:tw*2,sy:0,sw:W-tw*2,sh:th,label:'⬈ R'},
+      {sx:0,sy:th,sw:tw,sh:H-th,label:'⬋ L'},{sx:tw,sy:th,sw:tw,sh:H-th,label:'▼ C'},{sx:tw*2,sy:th,sw:W-tw*2,sh:H-th,label:'⬊ R'}
+    ];
+    info.textContent=`[3×2 Equal] ${W}×${H} → 6 tiles ~${tw}×${th}`;
+  } else {
+    const hw=Math.floor(W/2), hh=Math.floor(H/2);
+    cells=[
+      {sx:0,sy:0,sw:hw,sh:hh,label:'↖ TL'},{sx:hw,sy:0,sw:hw,sh:hh,label:'↗ TR'},
+      {sx:0,sy:hh,sw:hw,sh:hh,label:'↙ BL'},{sx:hw,sy:hh,sw:hw,sh:hh,label:'↘ BR'}
+    ];
+    info.textContent=`[2×2 Equal] ${W}×${H} → 4 tiles ${hw}×${hh}`;
+  }
+
+  zone.querySelector('.icon').textContent='✅';
+  zone.querySelector('.hint').innerHTML=name;
+  zone.classList.add('has-image');
+
+  grid.innerHTML='';
+  cells.forEach((c,i)=>{
+    const STEP=parseInt(stepSl.value);
+    const canvas=document.createElement('canvas');
+    canvas.width=c.sw; canvas.height=c.sh;
+    const div=document.createElement('div'); div.className='tile';
+    const tImg=document.createElement('img');
+    const label=document.createElement('div'); label.className='label';
+
+    let ox=0, oy=0, zoom=0, fH=false, fV=false;
+
+    function rd() {
+      canvas.width=c.sw-zoom*2;
+      canvas.height=c.sh-zoom*2;
+      const sx=c.sx+ox+zoom, sy=c.sy+oy+zoom;
+      const sw=c.sw-zoom*2, sh=c.sh-zoom*2;
+      if(sw<=0||sh<=0){tImg.src='';return;}
+
+      if(ctrCb.checked){
+        const tmp=document.createElement('canvas');tmp.width=sw;tmp.height=sh;
+        const tc=tmp.getContext('2d');
+        tc.save();
+        if(fH){tc.translate(sw,0);tc.scale(-1,1);}
+        if(fV){tc.translate(0,sh);tc.scale(1,-1);}
+        tc.drawImage(img,sx,sy,sw,sh,0,0,sw,sh);
+        tc.restore();
+        const r=centerContent(tmp,canvas);
+        label.textContent=`${c.label} ${sw}×${sh}`+(r.ctr?` · ${r.bw}×${r.bh}`:'')+(ox||oy?` @${ox>0?'+':''}${ox}${oy>0?'+':''}${oy}`:'');
+      } else {
+        const cc=canvas.getContext('2d');
+        cc.save();
+        if(fH){cc.translate(sw,0);cc.scale(-1,1);}
+        if(fV){cc.translate(0,sh);cc.scale(1,-1);}
+        cc.drawImage(img,sx,sy,sw,sh,0,0,sw,sh);
+        cc.restore();
+        label.textContent=`${c.label} ${sw}×${sh}`+(ox||oy?` @${ox>0?'+':''}${ox}${oy>0?'+':''}${oy}`:'');
+      }
+      tImg.src=canvas.toDataURL('image/png');
+    }
+    rd();
+
+    // Nudge (d-pad layout)
+    const nu=document.createElement('div'); nu.className='nudge-grid';
+    const nb=(t,fn)=>{const b=document.createElement('button');b.textContent=t;b.onclick=fn;return b;};
+    const sp=()=>{const b=document.createElement('button');b.style.visibility='hidden';return b;};
+    nu.appendChild(sp()); nu.appendChild(nb('↑',()=>{oy-=STEP;rd();})); nu.appendChild(sp());
+    nu.appendChild(nb('←',()=>{ox-=STEP;rd();})); nu.appendChild(nb('↺',()=>{ox=0;oy=0;rd();})); nu.appendChild(nb('→',()=>{ox+=STEP;rd();}));
+    nu.appendChild(sp()); nu.appendChild(nb('↓',()=>{oy+=STEP;rd();})); nu.appendChild(sp());
+
+    // Zoom + Flip + DL row
+    const cr=document.createElement('div'); cr.className='ctrl';
+    const mkb=(t,fn,cls='')=>{const b=document.createElement('button');b.textContent=t;b.onclick=fn;if(cls)b.className=cls;return b;};
+    cr.appendChild(mkb('−',()=>{zoom=Math.max(0,zoom-STEP);rd();}));
+    cr.appendChild(mkb('0',()=>{zoom=0;rd();}));
+    cr.appendChild(mkb('+',()=>{const mx=Math.floor(Math.min(c.sw,c.sh)/2)-10;zoom=Math.min(mx,zoom+STEP);rd();}));
+    const fhb=mkb('↔',()=>{fH=!fH;fhb.style.background=fH?'#7c5cfc':'';rd();});
+    const fvb=mkb('↕',()=>{fV=!fV;fvb.style.background=fV?'#7c5cfc':'';rd();});
+    cr.appendChild(fhb);
+    cr.appendChild(fvb);
+    cr.appendChild(mkb('⬇ DL',()=>{
+      const a=document.createElement('a');
+      a.download=`${base}_tile${i+1}${fH?'_H':''}${fV?'_V':''}.png`;
+      a.href=canvas.toDataURL('image/png');a.click();
+    },'dl-btn'));
+
+    div.appendChild(tImg);
+    div.appendChild(label);
+    div.appendChild(nu);
+    div.appendChild(cr);
+    grid.appendChild(div);
+  });
+}
+
+function resetAll(){
+  curImg=null;curName='';
+  grid.innerHTML='';info.textContent='';fileIn.value='';
+  zone.classList.remove('has-image');
+  zone.querySelector('.icon').textContent='🖼️';
+  zone.querySelector('.hint').innerHTML='Drop image or <span>click to browse</span>';
+}
+</script>
+</body>
+</html>

@@ -80,6 +80,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sa
       <h3>⚔️ Side G（聖域の騎士／魔法系）</h3>
       <div class="fig-grid" id="figGridG"></div>
     </div>
+    <div class="set-section">
+      <h3>🐺 KEMONO（獸人 Selection 04）</h3>
+      <div class="fig-grid" id="figGridK"></div>
+    </div>
 
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="cancelEdit()">Cancel</button>
@@ -137,6 +141,13 @@ const ALL_FIGS = [
   {id:"g14",name:"聖域の騎士【真】フェイスA",img:"images/g14.jpg",set:"side-g"},
   {id:"g15",name:"聖域の騎士フェイスA",img:"images/g15.jpg",set:"side-g"},
   {id:"g16",name:"聖域の騎士フェイスB",img:"images/g16.jpg",set:"side-g"},
+  {id:"k01",name:"聖域の騎士（髪型替え）",img:"images/k01.jpg",set:"kemono"},
+  {id:"k02",name:"錬金術師の少女（髪型替え）",img:"images/k02.jpg",set:"kemono"},
+  {id:"k03",name:"ウサギの獣人",img:"images/k03.jpg",set:"kemono"},
+  {id:"k04",name:"オオカミの獣人",img:"images/k04.jpg",set:"kemono"},
+  {id:"k05",name:"眼鏡をかけたネコの獣人",img:"images/k05.jpg",set:"kemono"},
+  {id:"k06",name:"キツネの獣人",img:"images/k06.jpg",set:"kemono"},
+  {id:"k07",name:"聖域の守護獣",img:"images/k07.jpg",set:"kemono"},
 ];
 
 let allUsers = {};
@@ -152,9 +163,10 @@ db.ref('users').on('value', snap => {
 
 // ── Build figure grids ──
 function buildFigGrids() {
-  ['C','G'].forEach(side => {
+  ['C','G','K'].forEach(side => {
     const grid = document.getElementById('figGrid'+side);
-    const figs = ALL_FIGS.filter(f => f.set === 'side-'+side.toLowerCase());
+    const setMap = {C:'side-c', G:'side-g', K:'kemono'};
+    const figs = ALL_FIGS.filter(f => f.set === setMap[side]);
     grid.innerHTML = figs.map(f => {
       const sel = selections[f.id];
       let cls = '';

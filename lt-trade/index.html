@@ -70,7 +70,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sa
   <div class="edit-panel" id="editPanel" style="display:none">
     <h2 id="editTitle">📝 你嘅 Trade List</h2>
     <input id="editName" placeholder="你個名" maxlength="20">
-    <input id="editContact" placeholder="聯絡方式（e.g. WhatsApp）" maxlength="40">
+    <input id="editContact" placeholder="電話號碼（用作識別，同號碼會merge）" maxlength="20">
 
     <div class="set-section">
       <h3>🧪 Side C（錬金術師／魔法系）</h3>
@@ -224,14 +224,14 @@ function startAdd() {
   selections = {};
   document.getElementById('editName').value = '';
   document.getElementById('editContact').value = '';
-  document.getElementById('editTitle').textContent = '📝 你嘅 Trade List';
+  document.getElementById('editTitle').textContent = '📝 你嘅 Trade List（用電話做識別）';
   showEdit();
 }
 function startEdit(key) {
   editMode = key;
   const u = allUsers[key];
   document.getElementById('editName').value = u.name;
-  document.getElementById('editContact').value = u.contact;
+  document.getElementById('editContact').value = u.contact || key;
   selections = {...(u.trades || {})};
   document.getElementById('editTitle').textContent = '✏️ 編輯 Trade List';
   showEdit();
@@ -250,17 +250,20 @@ function saveUser() {
   const name = document.getElementById('editName').value.trim();
   const contact = document.getElementById('editContact').value.trim();
   if (!name) return toast('請填名', true);
-  if (!contact) return toast('請填聯絡方式', true);
+  if (!contact) return toast('請填電話', true);
+
+  // Normalize phone as key (strip spaces, dashes)
+  const phoneKey = contact.replace(/[\s\-()]/g, '');
 
   // Clean: only save non-null selections
   const trades = {};
   Object.entries(selections).forEach(([k,v]) => { if (v) trades[k] = v; });
 
-  if (editMode) {
-    db.ref('users/' + editMode).update({name, contact, trades});
-  } else {
-    db.ref('users').push({name, contact, trades});
+  if (editMode && editMode !== phoneKey) {
+    // Phone changed — delete old record
+    db.ref('users/' + editMode).remove();
   }
+  db.ref('users/' + phoneKey).set({name, contact: phoneKey, trades});
   cancelEdit(); toast('✅ Saved!');
 }
 

@@ -127,11 +127,19 @@ let pendingFigure = null;
 let pendingDelete = null;
 
 async function init() {
-  const resp = await fetch(API + '/api/lt/config');
-  config = await resp.json();
-  currentSet = config.sets[0].id;
-  renderTabs();
-  await loadSet(currentSet);
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '<div style="text-align:center;padding:40px;color:#888"><p style="font-size:1.2rem">⏳ Loading...</p><p style="font-size:0.8rem;margin-top:8px">連接伺服器中</p></div>';
+  
+  try {
+    const resp = await fetch(API + '/api/lt/config');
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    config = await resp.json();
+    currentSet = config.sets[0].id;
+    renderTabs();
+    await loadSet(currentSet);
+  } catch(e) {
+    grid.innerHTML = '<div style="text-align:center;padding:40px;color:#f87171"><p style="font-size:1.2rem">⚠️ 暫時連接唔到伺服器</p><p style="font-size:0.8rem;margin-top:8px;color:#888">可能 Railway 仲 deploy 緊，等 2-3 分鐘再試</p><button onclick="init()" style="margin-top:16px;padding:8px 24px;border-radius:20px;border:1px solid #533afd;background:#13131a;color:#a99bff;cursor:pointer;font-size:0.85rem">🔄 Retry</button></div>';
+  }
 }
 
 function renderTabs() {

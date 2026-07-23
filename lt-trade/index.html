@@ -7,257 +7,263 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
-.container { max-width: 1200px; margin: 0 auto; padding: 16px; }
-.header { text-align: center; padding: 24px 0 8px; border-bottom: 1px solid #1e1e2e; margin-bottom: 16px; }
-.header h1 { font-size: 1.5rem; font-weight: 700; color: #fff; }
-.header .sub { font-size: 0.85rem; color: #888; margin-top: 4px; }
-.tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-.tab { padding: 8px 24px; border-radius: 20px; border: 1px solid #2a2a3a; background: #13131a; color: #999; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all .2s; }
-.tab:hover { border-color: #533afd; color: #ccc; }
-.tab.active { background: #533afd; border-color: #533afd; color: #fff; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-.card { background: #13131a; border: 1px solid #1e1e2e; border-radius: 12px; overflow: hidden; transition: border-color .2s; }
-.card:hover { border-color: #2a2a4a; }
-.card-img { width: 100%; height: 200px; object-fit: contain; background: #0d0d15; display: flex; align-items: center; justify-content: center; }
-.card-img img { max-width: 100%; max-height: 100%; }
-.card-img .no-img { color: #555; font-size: 0.8rem; }
-.card-body { padding: 12px; }
-.card-title { font-weight: 600; font-size: 0.95rem; color: #fff; margin-bottom: 10px; }
-.trade-section { margin-bottom: 8px; }
-.trade-label { font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
-.trade-label.out { color: #4ade80; }
-.trade-label.want { color: #f87171; }
-.trade-list { list-style: none; }
-.trade-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px; border-radius: 6px; background: #1a1a25; margin-bottom: 3px; font-size: 0.82rem; }
-.trade-item .info { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
-.trade-item .tname { color: #e0e0e0; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.trade-item .tcontact { color: #666; font-size: 0.75rem; }
-.trade-item .tqty { color: #888; font-size: 0.75rem; background: #0d0d15; padding: 2px 8px; border-radius: 10px; }
-.trade-item .del-btn { background: none; border: none; color: #555; cursor: pointer; font-size: 0.75rem; padding: 2px 4px; border-radius: 4px; }
-.trade-item .del-btn:hover { color: #f87171; background: #1a1015; }
-.no-trades { color: #444; font-size: 0.75rem; font-style: italic; }
-.add-btn { display: block; width: 100%; margin-top: 8px; padding: 6px; border-radius: 6px; border: 1px dashed #2a2a3a; background: transparent; color: #666; cursor: pointer; font-size: 0.8rem; transition: all .2s; }
-.add-btn:hover { border-color: #533afd; color: #a99bff; background: #13131f; }
-.modal-overlay { display: none; position: fixed; inset:0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
-.modal-overlay.show { display: flex; }
-.modal { background: #1a1a25; border: 1px solid #2a2a3a; border-radius: 16px; padding: 24px; width: 90%; max-width: 400px; }
-.modal h3 { font-size: 1.1rem; color: #fff; margin-bottom: 16px; }
-.modal label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 4px; margin-top: 12px; }
-.modal input, .modal select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #2a2a3a; background: #0d0d15; color: #e0e0e0; font-size: 0.9rem; }
-.modal input:focus, .modal select:focus { outline: none; border-color: #533afd; }
-.modal .btn-row { display: flex; gap: 8px; margin-top: 20px; }
-.modal .btn { flex:1; padding: 10px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-.modal .btn-primary { background: #533afd; color: #fff; }
-.modal .btn-ghost { background: #1e1e2e; color: #999; }
-.modal .btn-danger { background: #3d1520; color: #f87171; border: 1px solid #5a1a2a; }
-.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 10px 24px; border-radius: 20px; background: #1a2a1a; color: #4ade80; font-size: 0.85rem; z-index: 200; opacity: 0; transition: opacity .3s; pointer-events: none; }
-.toast.show { opacity: 1; }
-.toast.error { background: #2a1a1a; color: #f87171; }
-.del-hint { font-size: 0.8rem; color: #888; margin-bottom: 4px; }
-@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .header h1 { font-size: 1.3rem; } }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+.header { text-align:center; padding:20px 0 8px; border-bottom:1px solid #1e1e2e; margin-bottom:16px; }
+.header h1 { font-size:1.4rem; color:#fff; }
+.header .sub { font-size:0.8rem; color:#888; margin-top:4px; }
+
+/* ── Summary Cards ── */
+.user-card { background:#13131a; border:1px solid #1e1e2e; border-radius:12px; padding:16px; margin-bottom:12px; }
+.user-card .u-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.user-card .u-name { font-weight:700; color:#fff; font-size:1rem; }
+.user-card .u-contact { color:#888; font-size:0.8rem; }
+.user-card .u-actions { display:flex; gap:8px; }
+.user-card .u-edit-btn, .user-card .u-del-btn { background:none; border:1px solid #2a2a3a; color:#888; padding:4px 12px; border-radius:14px; cursor:pointer; font-size:0.75rem; }
+.user-card .u-edit-btn:hover { border-color:#533afd; color:#a99bff; }
+.user-card .u-del-btn:hover { border-color:#5a1a2a; color:#f87171; }
+.user-card .u-section { margin-bottom:6px; }
+.user-card .u-label { font-size:0.7rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:4px; }
+.user-card .u-label.out { color:#4ade80; }
+.user-card .u-label.want { color:#f87171; }
+.user-card .u-imgs { display:flex; flex-wrap:wrap; gap:6px; }
+.user-card .u-imgs img { width:50px; height:50px; object-fit:contain; border-radius:6px; background:#0d0d15; }
+
+.no-users { text-align:center; color:#555; padding:40px; }
+
+/* ── Edit Form ── */
+.edit-panel { background:#13131a; border:1px solid #1e1e2e; border-radius:12px; padding:16px; margin-bottom:16px; }
+.edit-panel h2 { font-size:1rem; color:#fff; margin-bottom:12px; }
+.edit-panel input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #2a2a3a; background:#0d0d15; color:#e0e0e0; font-size:0.9rem; margin-bottom:8px; }
+.edit-panel input:focus { outline:none; border-color:#533afd; }
+
+.set-section { margin-top:12px; }
+.set-section h3 { font-size:0.85rem; color:#aaa; margin-bottom:8px; }
+.fig-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.fig-item { width:70px; text-align:center; cursor:pointer; padding:4px; border-radius:8px; border:2px solid transparent; transition:all .15s; }
+.fig-item img { width:100%; height:56px; object-fit:contain; border-radius:4px; background:#0d0d15; }
+.fig-item .fig-name { font-size:0.6rem; color:#666; margin-top:2px; line-height:1.1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.fig-item.selected-out { border-color:#4ade80; background:rgba(74,222,128,0.08); }
+.fig-item.selected-out .fig-name { color:#4ade80; }
+.fig-item.selected-want { border-color:#f87171; background:rgba(248,113,113,0.08); }
+.fig-item.selected-want .fig-name { color:#f87171; }
+
+.btn-row { display:flex; gap:8px; margin-top:16px; }
+.btn { flex:1; padding:10px; border-radius:8px; border:none; font-size:0.9rem; font-weight:600; cursor:pointer; }
+.btn-primary { background:#533afd; color:#fff; }
+.btn-ghost { background:#1e1e2e; color:#999; }
+.btn-add { display:block; width:100%; margin-top:12px; padding:10px; border-radius:8px; border:1px dashed #2a2a3a; background:transparent; color:#888; cursor:pointer; font-size:0.85rem; }
+.btn-add:hover { border-color:#533afd; color:#a99bff; }
+
+.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); padding:10px 24px; border-radius:20px; background:#1a2a1a; color:#4ade80; font-size:0.85rem; z-index:200; opacity:0; transition:opacity .3s; pointer-events:none; }
+.toast.show { opacity:1; }
+.toast.error { background:#2a1a1a; color:#f87171; }
+
+@media (max-width:600px) { .fig-item { width:60px; } .fig-item img { height:48px; } }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header"><h1>🔄 LT Trade Board</h1><div class="sub">Link Travelers 換蛋平台 · 出徵一目了然</div></div>
-  <div class="tabs" id="tabs"></div>
-  <div class="grid" id="grid"></div>
-</div>
+  <div class="header"><h1>🔄 LT Trade Board</h1><div class="sub">Link Travelers 換蛋平台</div></div>
 
-<div class="modal-overlay" id="addModal">
-  <div class="modal">
-    <h3 id="modalTitle">我要放／徵</h3>
-    <label>你個名</label><input id="addName" placeholder="e.g. Eric" maxlength="20">
-    <label>聯絡方式</label><input id="addContact" placeholder="WhatsApp / @username" maxlength="40">
-    <label>類型</label>
-    <select id="addType"><option value="出">📤 出（我有，想放）</option><option value="徵">📥 徵（我想要）</option></select>
-    <label>數量</label><input id="addQty" type="number" min="1" max="99" value="1">
+  <!-- Edit Panel (hidden by default) -->
+  <div class="edit-panel" id="editPanel" style="display:none">
+    <h2 id="editTitle">📝 你嘅 Trade List</h2>
+    <input id="editName" placeholder="你個名" maxlength="20">
+    <input id="editContact" placeholder="聯絡方式（e.g. WhatsApp）" maxlength="40">
+
+    <div class="set-section">
+      <h3>🧪 Side C（錬金術師／魔法系）</h3>
+      <div class="fig-grid" id="figGridC"></div>
+    </div>
+    <div class="set-section">
+      <h3>⚔️ Side G（聖域の騎士／魔法系）</h3>
+      <div class="fig-grid" id="figGridG"></div>
+    </div>
+
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitTrade()">Submit</button>
+      <button class="btn btn-ghost" onclick="cancelEdit()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUser()">💾 Save</button>
     </div>
   </div>
-</div>
 
-<div class="modal-overlay" id="delModal">
-  <div class="modal">
-    <h3>🗑️ Delete Post</h3>
-    <p class="del-hint">請輸入你個名嚟確認 delete（必須同出 post 時一致）</p>
-    <input id="delName" placeholder="Your name" maxlength="20">
-    <div class="btn-row">
-      <button class="btn btn-ghost" onclick="closeDelModal()">Cancel</button>
-      <button class="btn btn-danger" id="delConfirmBtn">Delete</button>
-    </div>
-  </div>
+  <!-- Summary -->
+  <div id="summary"></div>
+  <button class="btn-add" onclick="startAdd()">+ 新增／編輯你嘅 Trade List</button>
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
-// ── Firebase Init ──
 firebase.initializeApp({
-  apiKey: "AIzaSyD4TFPRxsndWYMuqB1V6ST_i6e1F65EPLc",
-  authDomain: "lt-trading.firebaseapp.com",
-  projectId: "lt-trading",
-  storageBucket: "lt-trading.firebasestorage.app",
-  messagingSenderId: "575502299643",
-  appId: "1:575502299643:web:68e8c8088cb6ec626b5b5e",
-  databaseURL: "https://lt-trading-default-rtdb.firebaseio.com/"
+  apiKey:"AIzaSyD4TFPRxsndWYMuqB1V6ST_i6e1F65EPLc",
+  databaseURL:"https://lt-trading-default-rtdb.firebaseio.com/"
 });
 const db = firebase.database();
 
-// ── Config (hardcoded — no backend needed) ──
-const CONFIG = {"sets":[
-  {"id":"side-c","name":"Side C（錬金術師／魔法系）","figures":[
-    {"id":"c01","name":"錬金術師の少女【真】","image":"images/c01.jpg"},
-    {"id":"c02","name":"おさげのウサギの獣人","image":"images/c02.jpg"},
-    {"id":"c03","name":"術師のコート【桃】","image":"images/c03.jpg"},
-    {"id":"c04","name":"錬金術師の服【赤】","image":"images/c04.jpg"},
-    {"id":"c05","name":"上級魔術師の服（上）","image":"images/c05.jpg"},
-    {"id":"c06","name":"獣人の服【白】","image":"images/c06.jpg"},
-    {"id":"c07","name":"大型リュックサック","image":"images/c07.jpg"},
-    {"id":"c08","name":"術師の帽子","image":"images/c08.jpg"},
-    {"id":"c09","name":"術師の杖","image":"images/c09.jpg"},
-    {"id":"c10","name":"氷霜の弓矢","image":"images/c10.jpg"},
-    {"id":"c11","name":"ポーションセット","image":"images/c11.jpg"},
-    {"id":"c12","name":"錬金ベルトセット","image":"images/c12.jpg"},
-    {"id":"c13","name":"獣人の帽子【灰】","image":"images/c13.jpg"},
-    {"id":"c14","name":"波濤の剣","image":"images/c14.jpg"},
-    {"id":"c15","name":"錬金術師の少女【真】フェイスA","image":"images/c15.jpg"},
-    {"id":"c16","name":"錬金術師の少女【真】フェイスB","image":"images/c16.jpg"}
-  ]},
-  {"id":"side-g","name":"Side G（聖域の騎士／魔法系）","figures":[
-    {"id":"g01","name":"聖域の騎士【真】","image":"images/g01.jpg"},
-    {"id":"g02","name":"クロネコの獣人","image":"images/g02.jpg"},
-    {"id":"g03","name":"錬金の鎧【銀】（上）","image":"images/g03.jpg"},
-    {"id":"g04","name":"錬金の鎧【銀】（下）","image":"images/g04.jpg"},
-    {"id":"g05","name":"上級魔術師の服（下）","image":"images/g05.jpg"},
-    {"id":"g06","name":"妖刀宵雷（ショウライ）","image":"images/g06.jpg"},
-    {"id":"g07","name":"翠翼の聖斧","image":"images/g07.jpg"},
-    {"id":"g08","name":"ルーンの槌","image":"images/g08.jpg"},
-    {"id":"g09","name":"残火の短剣","image":"images/g09.jpg"},
-    {"id":"g10","name":"ネコの獣人の服","image":"images/g10.jpg"},
-    {"id":"g11","name":"マジックシールド","image":"images/g11.jpg"},
-    {"id":"g12","name":"ネコの獣人の兜","image":"images/g12.jpg"},
-    {"id":"g13","name":"妖精のマント【灰】","image":"images/g13.jpg"},
-    {"id":"g14","name":"聖域の騎士【真】フェイスA","image":"images/g14.jpg"},
-    {"id":"g15","name":"聖域の騎士フェイスA","image":"images/g15.jpg"},
-    {"id":"g16","name":"聖域の騎士フェイスB","image":"images/g16.jpg"}
-  ]}
-]};
+const ALL_FIGS = [
+  {id:"c01",name:"錬金術師の少女【真】",img:"images/c01.jpg",set:"side-c"},
+  {id:"c02",name:"おさげのウサギの獣人",img:"images/c02.jpg",set:"side-c"},
+  {id:"c03",name:"術師のコート【桃】",img:"images/c03.jpg",set:"side-c"},
+  {id:"c04",name:"錬金術師の服【赤】",img:"images/c04.jpg",set:"side-c"},
+  {id:"c05",name:"上級魔術師の服（上）",img:"images/c05.jpg",set:"side-c"},
+  {id:"c06",name:"獣人の服【白】",img:"images/c06.jpg",set:"side-c"},
+  {id:"c07",name:"大型リュックサック",img:"images/c07.jpg",set:"side-c"},
+  {id:"c08",name:"術師の帽子",img:"images/c08.jpg",set:"side-c"},
+  {id:"c09",name:"術師の杖",img:"images/c09.jpg",set:"side-c"},
+  {id:"c10",name:"氷霜の弓矢",img:"images/c10.jpg",set:"side-c"},
+  {id:"c11",name:"ポーションセット",img:"images/c11.jpg",set:"side-c"},
+  {id:"c12",name:"錬金ベルトセット",img:"images/c12.jpg",set:"side-c"},
+  {id:"c13",name:"獣人の帽子【灰】",img:"images/c13.jpg",set:"side-c"},
+  {id:"c14",name:"波濤の剣",img:"images/c14.jpg",set:"side-c"},
+  {id:"c15",name:"錬金術師の少女【真】フェイスA",img:"images/c15.jpg",set:"side-c"},
+  {id:"c16",name:"錬金術師の少女【真】フェイスB",img:"images/c16.jpg",set:"side-c"},
+  {id:"g01",name:"聖域の騎士【真】",img:"images/g01.jpg",set:"side-g"},
+  {id:"g02",name:"クロネコの獣人",img:"images/g02.jpg",set:"side-g"},
+  {id:"g03",name:"錬金の鎧【銀】（上）",img:"images/g03.jpg",set:"side-g"},
+  {id:"g04",name:"錬金の鎧【銀】（下）",img:"images/g04.jpg",set:"side-g"},
+  {id:"g05",name:"上級魔術師の服（下）",img:"images/g05.jpg",set:"side-g"},
+  {id:"g06",name:"妖刀宵雷（ショウライ）",img:"images/g06.jpg",set:"side-g"},
+  {id:"g07",name:"翠翼の聖斧",img:"images/g07.jpg",set:"side-g"},
+  {id:"g08",name:"ルーンの槌",img:"images/g08.jpg",set:"side-g"},
+  {id:"g09",name:"残火の短剣",img:"images/g09.jpg",set:"side-g"},
+  {id:"g10",name:"ネコの獣人の服",img:"images/g10.jpg",set:"side-g"},
+  {id:"g11",name:"マジックシールド",img:"images/g11.jpg",set:"side-g"},
+  {id:"g12",name:"ネコの獣人の兜",img:"images/g12.jpg",set:"side-g"},
+  {id:"g13",name:"妖精のマント【灰】",img:"images/g13.jpg",set:"side-g"},
+  {id:"g14",name:"聖域の騎士【真】フェイスA",img:"images/g14.jpg",set:"side-g"},
+  {id:"g15",name:"聖域の騎士フェイスA",img:"images/g15.jpg",set:"side-g"},
+  {id:"g16",name:"聖域の騎士フェイスB",img:"images/g16.jpg",set:"side-g"},
+];
 
-let allTrades = {};
-let currentSet = null;
-let pendingFigure = null;
-let pendingDelete = null;
+let allUsers = {};
+let editMode = null; // null or user key
+let selections = {}; // {figId: '出'|'徵'|null}
 
-// ── Firebase Realtime Listener ──
-db.ref('trades').on('value', snap => {
-  allTrades = snap.val() || {};
-  if (currentSet) renderGrid(currentSet);
+// ── Real-time ──
+db.ref('users').on('value', snap => {
+  allUsers = snap.val() || {};
+  renderSummary();
+  buildFigGrids();
 });
 
-// ── Init ──
-function init() {
-  currentSet = CONFIG.sets[0].id;
-  renderTabs();
-  renderGrid(currentSet);
+// ── Build figure grids ──
+function buildFigGrids() {
+  ['C','G'].forEach(side => {
+    const grid = document.getElementById('figGrid'+side);
+    const figs = ALL_FIGS.filter(f => f.set === 'side-'+side.toLowerCase());
+    grid.innerHTML = figs.map(f => {
+      const sel = selections[f.id];
+      let cls = '';
+      if (sel === '出') cls = 'selected-out';
+      else if (sel === '徵') cls = 'selected-want';
+      return `<div class="fig-item ${cls}" onclick="toggleFig('${f.id}')" title="${f.name}">
+        <img src="${f.img}" onerror="this.style.display='none'">
+        <div class="fig-name">${f.name.substring(0,10)}</div>
+      </div>`;
+    }).join('');
+  });
 }
 
-function renderTabs() {
-  document.getElementById('tabs').innerHTML = CONFIG.sets.map(s =>
-    `<button class="tab${s.id===currentSet?' active':''}" onclick="switchSet('${s.id}')">${s.name}</button>`
-  ).join('');
+function toggleFig(figId) {
+  if (!selections[figId] || selections[figId] === '徵') selections[figId] = '出';
+  else if (selections[figId] === '出') selections[figId] = '徵';
+  else selections[figId] = null;
+  buildFigGrids();
 }
 
-function switchSet(setId) { currentSet = setId; renderTabs(); renderGrid(setId); }
+// ── Summary ──
+function renderSummary() {
+  const el = document.getElementById('summary');
+  const users = Object.entries(allUsers);
+  if (!users.length) { el.innerHTML = '<div class="no-users">未有 trade list — 㩒下面 button 加入！</div>'; return; }
 
-function getSetTrades(setId) {
-  return Object.entries(allTrades)
-    .filter(([_,t]) => t.set_id === setId)
-    .map(([id,t]) => ({id, ...t}));
-}
+  el.innerHTML = users.map(([key, u]) => {
+    const trades = u.trades || {};
+    const outFigs = ALL_FIGS.filter(f => trades[f.id] === '出');
+    const wantFigs = ALL_FIGS.filter(f => trades[f.id] === '徵');
 
-function renderGrid(setId) {
-  const grid = document.getElementById('grid');
-  const set = CONFIG.sets.find(s => s.id === setId);
-  if (!set) { grid.innerHTML = '<p style="color:#555">Set not found</p>'; return; }
-
-  const trades = getSetTrades(setId);
-  grid.innerHTML = set.figures.map(fig => {
-    const ft = trades.filter(t => t.figure_id === fig.id);
-    const out = ft.filter(t => t.type==='出'), want = ft.filter(t => t.type==='徵');
-    return `<div class="card">
-      <div class="card-img">${fig.image ? `<img src="${fig.image}" alt="${esc(fig.name)}" onerror="this.parentElement.innerHTML='<span class=no-img>🖼️</span>'">` : '<span class="no-img">🖼️</span>'}</div>
-      <div class="card-body">
-        <div class="card-title">${esc(fig.name)}</div>
-        <div class="trade-section"><div class="trade-label out">📤 出</div>${out.length ? tradeList(out) : '<div class="no-trades">未有</div>'}</div>
-        <div class="trade-section"><div class="trade-label want">📥 徵</div>${want.length ? tradeList(want) : '<div class="no-trades">未有</div>'}</div>
-        <button class="add-btn" onclick="openAdd('${fig.id}','${escAttr(fig.name)}')">+ 我要放／徵</button>
+    return `<div class="user-card">
+      <div class="u-header">
+        <div><span class="u-name">${esc(u.name)}</span> <span class="u-contact">${esc(u.contact)}</span></div>
+        <div class="u-actions">
+          <button class="u-edit-btn" onclick="startEdit('${key}')">✏️ Edit</button>
+          <button class="u-del-btn" onclick="delUser('${key}','${escAttr(u.name)}')">🗑️</button>
+        </div>
+      </div>
+      <div class="u-section">
+        <div class="u-label out">📤 出（有多可換）</div>
+        <div class="u-imgs">${outFigs.length ? outFigs.map(f => `<img src="${f.img}" title="${f.name}" onerror="this.style.display='none'">`).join('') : '<span style="color:#444;font-size:0.75rem">—</span>'}</div>
+      </div>
+      <div class="u-section">
+        <div class="u-label want">📥 徵（想換入）</div>
+        <div class="u-imgs">${wantFigs.length ? wantFigs.map(f => `<img src="${f.img}" title="${f.name}" onerror="this.style.display='none'">`).join('') : '<span style="color:#444;font-size:0.75rem">—</span>'}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-function tradeList(items) {
-  return '<ul class="trade-list">' + items.map(t =>
-    `<li class="trade-item"><div class="info"><span class="tname">${esc(t.name)}</span><span class="tcontact">${esc(t.contact)}</span></div><span class="tqty">x${t.qty}</span><button class="del-btn" onclick="openDelete('${t.id}','${escAttr(t.name)}')" title="Delete">✕</button></li>`
-  ).join('') + '</ul>';
+// ── Edit ──
+function startAdd() {
+  editMode = null;
+  selections = {};
+  document.getElementById('editName').value = '';
+  document.getElementById('editContact').value = '';
+  document.getElementById('editTitle').textContent = '📝 你嘅 Trade List';
+  showEdit();
+}
+function startEdit(key) {
+  editMode = key;
+  const u = allUsers[key];
+  document.getElementById('editName').value = u.name;
+  document.getElementById('editContact').value = u.contact;
+  selections = {...(u.trades || {})};
+  document.getElementById('editTitle').textContent = '✏️ 編輯 Trade List';
+  showEdit();
+}
+function showEdit() {
+  document.getElementById('editPanel').style.display = 'block';
+  buildFigGrids();
+  document.getElementById('editName').focus();
+}
+function cancelEdit() {
+  document.getElementById('editPanel').style.display = 'none';
+  editMode = null; selections = {};
+}
+
+function saveUser() {
+  const name = document.getElementById('editName').value.trim();
+  const contact = document.getElementById('editContact').value.trim();
+  if (!name) return toast('請填名', true);
+  if (!contact) return toast('請填聯絡方式', true);
+
+  // Clean: only save non-null selections
+  const trades = {};
+  Object.entries(selections).forEach(([k,v]) => { if (v) trades[k] = v; });
+
+  if (editMode) {
+    db.ref('users/' + editMode).update({name, contact, trades});
+  } else {
+    db.ref('users').push({name, contact, trades});
+  }
+  cancelEdit(); toast('✅ Saved!');
+}
+
+function delUser(key, name) {
+  if (!confirm('Delete ' + name + '?')) return;
+  db.ref('users/' + key).remove();
+  toast('🗑️ Deleted');
 }
 
 function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function escAttr(s) { return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
-
-// ── Add Modal ──
-function openAdd(figId, figName) {
-  pendingFigure = figId;
-  document.getElementById('modalTitle').textContent = '📝 ' + figName;
-  document.getElementById('addName').value = document.getElementById('addContact').value = '';
-  document.getElementById('addType').value = '出'; document.getElementById('addQty').value = '1';
-  document.getElementById('addModal').classList.add('show');
-}
-function closeModal() { document.getElementById('addModal').classList.remove('show'); pendingFigure = null; }
-
-function submitTrade() {
-  const name = document.getElementById('addName').value.trim();
-  const contact = document.getElementById('addContact').value.trim();
-  const type = document.getElementById('addType').value;
-  const qty = parseInt(document.getElementById('addQty').value) || 1;
-  if (!name) return toast('請填你個名', true);
-  if (!contact) return toast('請填聯絡方式', true);
-
-  db.ref('trades').push({
-    figure_id: pendingFigure, set_id: currentSet,
-    name, contact, type, qty, ts: Date.now()
-  });
-  closeModal(); toast('✅ Posted!');
-}
-
-// ── Delete Modal ──
-function openDelete(tradeId) { pendingDelete = tradeId; document.getElementById('delName').value = ''; document.getElementById('delModal').classList.add('show'); }
-function closeDelModal() { document.getElementById('delModal').classList.remove('show'); pendingDelete = null; }
-
-function confirmDelete() {
-  const name = document.getElementById('delName').value.trim();
-  if (!name) return toast('Please enter your name', true);
-  const trade = allTrades[pendingDelete];
-  if (!trade || trade.name !== name) return toast('❌ 名唔啱 — 只可以 delete 自己嘅 post', true);
-  db.ref('trades/' + pendingDelete).remove();
-  closeDelModal(); toast('🗑️ Deleted');
-}
-document.getElementById('delConfirmBtn').onclick = confirmDelete;
-document.getElementById('addModal').onclick = function(e) { if (e.target===this) closeModal(); };
-document.getElementById('delModal').onclick = function(e) { if (e.target===this) closeDelModal(); };
-
 function toast(msg, isErr) {
   const t = document.getElementById('toast'); t.textContent = msg;
   t.className = 'toast show' + (isErr?' error':''); setTimeout(()=>t.classList.remove('show'), 2500);
 }
-
-init();
 </script>
 </body>
 </html>

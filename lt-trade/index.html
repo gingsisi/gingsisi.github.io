@@ -128,7 +128,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sa
   <!-- Tabs -->
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('summary')">📋 所有人</button>
-    <button class="tab-btn" onclick="switchTab('requests')">📨 換貨請求 <span class="badge" id="reqBadge" style="display:none">0</span></button>
+    <button class="tab-btn" onclick="switchTab('requests')">✅ 換貨紀錄 <span class="badge" id="reqBadge" style="display:none">0</span></button>
   </div>
 
   <!-- Summary View -->
@@ -316,7 +316,6 @@ function renderSummary() {
     html += `<tr>
       <td>
         <div class="st-name">${esc(u.name)}${isMe?' <span class="st-me">(你)</span>':''}</div>
-        <div class="st-contact">${esc(u.contact||key)}</div>
         <div class="st-action">
           <button class="btn-sm" onclick="startEdit('${key}')">✏️</button>
           <button class="btn-sm danger" onclick="delUser('${key}','${escAttr(u.name)}')">🗑️</button>
@@ -414,11 +413,18 @@ function sendTradeRequest() {
 // ── Requests View ──
 function renderRequests() {
   const el = document.getElementById('tabRequests');
-  const reqs = Object.entries(allRequests).sort((a,b) => b[1].created_at - a[1].created_at);
+  const allReqs = Object.entries(allRequests).sort((a,b) => b[1].created_at - a[1].created_at);
 
-  if (!reqs.length) { el.innerHTML = '<div class="no-data">未有換貨請求</div>'; return; }
+  // Show: pending TO ME + all accepted/rejected
+  const visibleReqs = allReqs.filter(([rid, r]) => {
+    if (r.status === 'pending' && r.to === MY_PHONE) return true; // I need to respond
+    if (r.status === 'accepted' || r.status === 'rejected') return true; // history
+    return false;
+  });
 
-  el.innerHTML = reqs.map(([rid, r]) => {
+  if (!visibleReqs.length) { el.innerHTML = '<div class="no-data">未有換貨紀錄</div>'; return; }
+
+  el.innerHTML = visibleReqs.map(([rid, r]) => {
     const isToMe = r.to === MY_PHONE;
     const isFromMe = r.from === MY_PHONE;
     const statusLabel = {pending:'⏳ 等緊回覆', accepted:'✅ 已接受', rejected:'❌ 已拒絕'}[r.status] || r.status;

@@ -3,35 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LT Trade Board 🔄</title>
+<title>LT 04 OL 交換平台</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
-.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.container { max-width: 960px; margin: 0 auto; padding: 16px; }
 
 .header { text-align:center; padding:20px 0 8px; border-bottom:1px solid #1e1e2e; margin-bottom:16px; }
 .header h1 { font-size:1.4rem; color:#fff; }
 .header .sub { font-size:0.8rem; color:#888; margin-top:4px; }
+.header .me-badge { display:inline-block; background:#533afd22; color:#a99bff; padding:2px 10px; border-radius:10px; font-size:0.75rem; margin-top:6px; }
 
-/* ── Summary Cards ── */
-.user-card { background:#13131a; border:1px solid #1e1e2e; border-radius:12px; padding:16px; margin-bottom:12px; }
+/* Tab nav */
+.tab-nav { display:flex; gap:0; margin-bottom:16px; border-bottom:1px solid #1e1e2e; }
+.tab-btn { flex:1; padding:10px; background:none; border:none; color:#666; font-size:0.85rem; cursor:pointer; border-bottom:2px solid transparent; }
+.tab-btn.active { color:#a99bff; border-bottom-color:#533afd; }
+.tab-btn .badge { background:#f87171; color:#fff; font-size:0.65rem; padding:1px 6px; border-radius:8px; margin-left:4px; }
+
+/* Cards */
+.user-card { background:#13131a; border:1px solid #1e1e2e; border-radius:12px; padding:16px; margin-bottom:12px; position:relative; }
+.user-card.me { border-color:#533afd44; }
 .user-card .u-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
 .user-card .u-name { font-weight:700; color:#fff; font-size:1rem; }
 .user-card .u-contact { color:#888; font-size:0.8rem; }
+.user-card .u-badge { display:inline-block; padding:1px 8px; border-radius:10px; font-size:0.65rem; margin-left:6px; }
+.u-badge.me-tag { background:#533afd33; color:#a99bff; }
 .user-card .u-actions { display:flex; gap:8px; }
-.user-card .u-edit-btn, .user-card .u-del-btn { background:none; border:1px solid #2a2a3a; color:#888; padding:4px 12px; border-radius:14px; cursor:pointer; font-size:0.75rem; }
-.user-card .u-edit-btn:hover { border-color:#533afd; color:#a99bff; }
-.user-card .u-del-btn:hover { border-color:#5a1a2a; color:#f87171; }
+.btn-sm { background:none; border:1px solid #2a2a3a; color:#888; padding:5px 14px; border-radius:14px; cursor:pointer; font-size:0.75rem; }
+.btn-sm:hover { border-color:#533afd; color:#a99bff; }
+.btn-sm.danger:hover { border-color:#5a1a2a; color:#f87171; }
+.btn-sm.trade { border-color:#f59e0b44; color:#f59e0b; }
+.btn-sm.trade:hover { border-color:#f59e0b; background:#f59e0b11; }
+
 .user-card .u-section { margin-bottom:6px; }
 .user-card .u-label { font-size:0.7rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:4px; }
-.user-card .u-label.out { color:#4ade80; }
-.user-card .u-label.want { color:#f87171; }
+.u-label.out { color:#4ade80; }
+.u-label.want { color:#f87171; }
 .user-card .u-imgs { display:flex; flex-wrap:wrap; gap:6px; }
 .user-card .u-imgs img { width:50px; height:50px; object-fit:contain; border-radius:6px; background:#0d0d15; }
+.empty-text { color:#444; font-size:0.75rem; }
 
-.no-users { text-align:center; color:#555; padding:40px; }
+/* Request cards */
+.req-card { background:#13131a; border:1px solid #f59e0b44; border-radius:12px; padding:16px; margin-bottom:12px; }
+.req-card .r-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.req-card .r-title { color:#f59e0b; font-weight:700; font-size:0.9rem; }
+.req-card .r-from { color:#888; font-size:0.8rem; }
+.req-card .r-items { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+.req-card .r-items img { width:44px; height:44px; object-fit:contain; border-radius:6px; background:#0d0d15; }
+.req-card .r-arrow { display:flex; align-items:center; justify-content:center; color:#f59e0b; font-size:1.2rem; padding:0 6px; }
+.req-card .r-row { display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.req-card .r-label { font-size:0.7rem; color:#888; min-width:70px; }
+.req-card .r-actions { display:flex; gap:8px; margin-top:8px; }
+.btn-accept { background:#4ade8011; border:1px solid #4ade8044; color:#4ade80; padding:6px 16px; border-radius:14px; cursor:pointer; font-size:0.8rem; }
+.btn-accept:hover { background:#4ade8022; }
+.btn-reject { background:#f8717111; border:1px solid #f8717144; color:#f87171; padding:6px 16px; border-radius:14px; cursor:pointer; font-size:0.8rem; }
+.btn-reject:hover { background:#f8717122; }
 
-/* ── Edit Form ── */
+/* Edit Panel */
 .edit-panel { background:#13131a; border:1px solid #1e1e2e; border-radius:12px; padding:16px; margin-bottom:16px; }
 .edit-panel h2 { font-size:1rem; color:#fff; margin-bottom:12px; }
 .edit-panel input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #2a2a3a; background:#0d0d15; color:#e0e0e0; font-size:0.9rem; margin-bottom:8px; }
@@ -47,52 +75,93 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sa
 .fig-item.selected-out .fig-name { color:#4ade80; }
 .fig-item.selected-want { border-color:#f87171; background:rgba(248,113,113,0.08); }
 .fig-item.selected-want .fig-name { color:#f87171; }
+.fig-item.selected-both { border-color:#f59e0b; background:rgba(245,158,11,0.08); }
+.fig-item.selected-both .fig-name { color:#f59e0b; }
 
 .btn-row { display:flex; gap:8px; margin-top:16px; }
 .btn { flex:1; padding:10px; border-radius:8px; border:none; font-size:0.9rem; font-weight:600; cursor:pointer; }
 .btn-primary { background:#533afd; color:#fff; }
 .btn-ghost { background:#1e1e2e; color:#999; }
+.btn-trade { background:#f59e0b; color:#0a0a0f; }
+.btn-trade:disabled { background:#3d3d2e; color:#666; cursor:not-allowed; }
 .btn-add { display:block; width:100%; margin-top:12px; padding:10px; border-radius:8px; border:1px dashed #2a2a3a; background:transparent; color:#888; cursor:pointer; font-size:0.85rem; }
 .btn-add:hover { border-color:#533afd; color:#a99bff; }
 
-.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); padding:10px 24px; border-radius:20px; background:#1a2a1a; color:#4ade80; font-size:0.85rem; z-index:200; opacity:0; transition:opacity .3s; pointer-events:none; }
+/* Trade Modal */
+.modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:500; display:flex; align-items:center; justify-content:center; }
+.modal { background:#13131a; border:1px solid #2a2a3a; border-radius:16px; padding:20px; max-width:500px; width:95%; max-height:90vh; overflow-y:auto; }
+.modal h2 { font-size:1.1rem; color:#fff; margin-bottom:8px; }
+.modal .match-section { margin:12px 0; }
+.modal .match-section h4 { font-size:0.8rem; color:#888; margin-bottom:8px; }
+.modal .match-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.modal .match-item { width:64px; text-align:center; cursor:pointer; padding:3px; border-radius:8px; border:2px solid transparent; }
+.modal .match-item img { width:100%; height:50px; object-fit:contain; border-radius:4px; background:#0d0d15; }
+.modal .match-item .m-name { font-size:0.55rem; color:#666; margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.modal .match-item.picked { border-color:#f59e0b; background:rgba(245,158,11,0.1); }
+.modal .modal-actions { display:flex; gap:8px; margin-top:16px; }
+
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:10px 24px; border-radius:20px; background:#1a2a1a; color:#4ade80; font-size:0.85rem; z-index:600; opacity:0; transition:opacity .3s; pointer-events:none; }
 .toast.show { opacity:1; }
 .toast.error { background:#2a1a1a; color:#f87171; }
 
-@media (max-width:600px) { .fig-item { width:60px; } .fig-item img { height:48px; } }
+.no-data { text-align:center; color:#555; padding:40px; }
+
+@media (max-width:600px) { .fig-item { width:60px; } .fig-item img { height:48px; } .modal { padding:14px; } }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header"><h1>🔄 LT 04 OL 交換平台</h1><div class="sub">Link Travelers 換蛋平台</div></div>
+  <div class="header">
+    <h1>🔄 LT 04 OL 交換平台</h1>
+    <div class="sub">Link Travelers 扭蛋交換</div>
+    <div class="me-badge" id="meBadge" style="display:none"></div>
+  </div>
 
-  <!-- Edit Panel (hidden by default) -->
+  <!-- Tabs -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('summary')">📋 所有人</button>
+    <button class="tab-btn" onclick="switchTab('requests')">📨 換貨請求 <span class="badge" id="reqBadge" style="display:none">0</span></button>
+  </div>
+
+  <!-- Summary View -->
+  <div id="tabSummary"></div>
+
+  <!-- Requests View -->
+  <div id="tabRequests" style="display:none"></div>
+
+  <!-- Edit Panel (hidden) -->
   <div class="edit-panel" id="editPanel" style="display:none">
     <h2 id="editTitle">📝 你嘅 Trade List</h2>
     <input id="editName" placeholder="你個名" maxlength="20">
     <input id="editContact" placeholder="電話號碼（用作識別，同號碼會merge）" maxlength="20">
-
-    <div class="set-section">
-      <h3>🧪 Side C（錬金術師／魔法系）</h3>
-      <div class="fig-grid" id="figGridC"></div>
-    </div>
-    <div class="set-section">
-      <h3>⚔️ Side G（聖域の騎士／魔法系）</h3>
-      <div class="fig-grid" id="figGridG"></div>
-    </div>
-    <div class="set-section">
-      <h3>🐺 KEMONO（獸人 Selection 04）</h3>
-      <div class="fig-grid" id="figGridK"></div>
-    </div>
-
+    <div class="set-section"><h3>🧪 Side C（錬金術師／魔法系）</h3><div class="fig-grid" id="figGridC"></div></div>
+    <div class="set-section"><h3>⚔️ Side G（聖域の騎士／魔法系）</h3><div class="fig-grid" id="figGridG"></div></div>
+    <div class="set-section"><h3>🐺 KEMONO（獸人 Selection 04）</h3><div class="fig-grid" id="figGridK"></div></div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="cancelEdit()">Cancel</button>
       <button class="btn btn-primary" onclick="saveUser()">💾 Save</button>
     </div>
   </div>
 
-  <!-- Summary -->
-  <div id="summary"></div>
+  <!-- Trade Modal (hidden) -->
+  <div class="modal-overlay" id="tradeModal" style="display:none">
+    <div class="modal">
+      <h2 id="tradeTitle">🔄 發起換貨</h2>
+      <div class="match-section">
+        <h4 style="color:#4ade80">📤 你可以俾佢嘅（你出 ∩ 佢徵）</h4>
+        <div class="match-grid" id="myOffers"></div>
+      </div>
+      <div class="match-section">
+        <h4 style="color:#f87171">📥 佢可以俾你嘅（你徵 ∩ 佢出）</h4>
+        <div class="match-grid" id="theirOffers"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeTrade()">Cancel</button>
+        <button class="btn btn-trade" id="sendTradeBtn" onclick="sendTradeRequest()" disabled>📨 發送換貨請求</button>
+      </div>
+    </div>
+  </div>
+
   <button class="btn-add" onclick="startAdd()">+ 新增／編輯你嘅 Trade List</button>
 </div>
 <div class="toast" id="toast"></div>
@@ -151,20 +220,247 @@ const ALL_FIGS = [
 ];
 
 let allUsers = {};
-let editMode = null; // null or user key
-let selections = {}; // {figId: '出'|'徵'|null}
+let allRequests = {};
+let currentTab = 'summary';
+let editMode = null;
+let selections = {};
+let tradeTarget = null;
+let tradePicks = {myOffer: null, theirOffer: null};
 
-// ── Real-time ──
-db.ref('users').on('value', snap => {
-  allUsers = snap.val() || {};
-  renderSummary();
-  buildFigGrids();
-});
+const MY_PHONE = localStorage.getItem('lt_my_phone') || '';
+
+// ── Realtime listeners ──
+db.ref('users').on('value', snap => { allUsers = snap.val() || {}; refreshAll(); });
+db.ref('requests').on('value', snap => { allRequests = snap.val() || {}; refreshAll(); });
+
+function refreshAll() {
+  if (currentTab === 'summary') renderSummary();
+  if (currentTab === 'requests') renderRequests();
+  updateBadges();
+  if (MY_PHONE && allUsers[MY_PHONE]) {
+    document.getElementById('meBadge').style.display = 'inline-block';
+    document.getElementById('meBadge').textContent = '👤 ' + allUsers[MY_PHONE].name + '（你）';
+  } else {
+    document.getElementById('meBadge').style.display = 'none';
+  }
+}
+
+function updateBadges() {
+  const myReqs = Object.values(allRequests).filter(r => r.to === MY_PHONE && r.status === 'pending');
+  const b = document.getElementById('reqBadge');
+  if (myReqs.length) { b.style.display = 'inline'; b.textContent = myReqs.length; }
+  else { b.style.display = 'none'; }
+}
+
+// ── Tabs ──
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (tab === 'summary') {
+    document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+    document.getElementById('tabSummary').style.display = 'block';
+    document.getElementById('tabRequests').style.display = 'none';
+    renderSummary();
+  } else {
+    document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+    document.getElementById('tabSummary').style.display = 'none';
+    document.getElementById('tabRequests').style.display = 'block';
+    renderRequests();
+  }
+}
+
+// ── Summary ──
+function renderSummary() {
+  const el = document.getElementById('tabSummary');
+  const users = Object.entries(allUsers);
+  if (!users.length) { el.innerHTML = '<div class="no-data">未有 trade list — 㩒下面 button 加入！</div>'; return; }
+
+  el.innerHTML = users.map(([key, u]) => {
+    const trades = u.trades || {};
+    const outFigs = ALL_FIGS.filter(f => trades[f.id] === '出');
+    const wantFigs = ALL_FIGS.filter(f => trades[f.id] === '徵');
+    const isMe = (key === MY_PHONE);
+
+    return `<div class="user-card${isMe?' me':''}">
+      <div class="u-header">
+        <div>
+          <span class="u-name">${esc(u.name)}</span>
+          <span class="u-contact">${esc(u.contact||key)}</span>
+          ${isMe?'<span class="u-badge me-tag">你</span>':''}
+          ${!isMe?'<button class="btn-sm trade" onclick="startTrade(\''+key+'\')">🔄 發起換貨</button>':''}
+        </div>
+        <div class="u-actions">
+          <button class="btn-sm" onclick="startEdit('${key}')">✏️ Edit</button>
+          <button class="btn-sm danger" onclick="delUser('${key}','${escAttr(u.name)}')">🗑️</button>
+        </div>
+      </div>
+      <div class="u-section">
+        <div class="u-label out">📤 出（有多可換）</div>
+        <div class="u-imgs">${outFigs.length ? outFigs.map(f => `<img src="${f.img}" title="${f.name}" onerror="this.style.display='none'">`).join('') : '<span class="empty-text">—</span>'}</div>
+      </div>
+      <div class="u-section">
+        <div class="u-label want">📥 徵（想換入）</div>
+        <div class="u-imgs">${wantFigs.length ? wantFigs.map(f => `<img src="${f.img}" title="${f.name}" onerror="this.style.display='none'">`).join('') : '<span class="empty-text">—</span>'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Trade Modal ──
+function startTrade(targetPhone) {
+  if (!MY_PHONE) { toast('請先加入你嘅 Trade List！', true); return; }
+  const me = allUsers[MY_PHONE];
+  const them = allUsers[targetPhone];
+  if (!me || !them) { toast('Data error', true); return; }
+
+  const myTrades = me.trades || {};
+  const theirTrades = them.trades || {};
+
+  tradeTarget = targetPhone;
+  tradePicks = {myOffer: null, theirOffer: null};
+
+  // My "出" ∩ Their "徵"
+  const myOut = ALL_FIGS.filter(f => myTrades[f.id] === '出' && theirTrades[f.id] === '徵');
+  // My "徵" ∩ Their "出"
+  const theirOut = ALL_FIGS.filter(f => myTrades[f.id] === '徵' && theirTrades[f.id] === '出');
+
+  document.getElementById('tradeTitle').textContent = '🔄 同 ' + them.name + ' 換貨';
+
+  document.getElementById('myOffers').innerHTML = myOut.length
+    ? myOut.map(f => `<div class="match-item" id="pick_${f.id}" onclick="pickTrade('myOffer','${f.id}')"><img src="${f.img}" onerror="this.style.display='none'"><div class="m-name">${f.name.substring(0,8)}</div></div>`).join('')
+    : '<span style="color:#444;font-size:0.8rem">冇 match — 你嘅「出」同佢嘅「徵」冇重疊</span>';
+
+  document.getElementById('theirOffers').innerHTML = theirOut.length
+    ? theirOut.map(f => `<div class="match-item" id="pick_${f.id}" onclick="pickTrade('theirOffer','${f.id}')"><img src="${f.img}" onerror="this.style.display='none'"><div class="m-name">${f.name.substring(0,8)}</div></div>`).join('')
+    : '<span style="color:#444;font-size:0.8rem">冇 match — 佢嘅「出」同你嘅「徵」冇重疊</span>';
+
+  updateTradeBtn();
+  document.getElementById('tradeModal').style.display = 'flex';
+}
+
+function pickTrade(which, figId) {
+  if (tradePicks[which] === figId) { tradePicks[which] = null; }
+  else { tradePicks[which] = figId; }
+  document.querySelectorAll('#myOffers .match-item, #theirOffers .match-item').forEach(el => el.classList.remove('picked'));
+  if (tradePicks.myOffer) document.getElementById('pick_'+tradePicks.myOffer)?.classList.add('picked');
+  if (tradePicks.theirOffer) document.getElementById('pick_'+tradePicks.theirOffer)?.classList.add('picked');
+  updateTradeBtn();
+}
+
+function updateTradeBtn() {
+  const ok = tradePicks.myOffer && tradePicks.theirOffer;
+  document.getElementById('sendTradeBtn').disabled = !ok;
+}
+
+function closeTrade() {
+  document.getElementById('tradeModal').style.display = 'none';
+  tradeTarget = null;
+  tradePicks = {myOffer: null, theirOffer: null};
+}
+
+function sendTradeRequest() {
+  if (!tradePicks.myOffer || !tradePicks.theirOffer) return toast('請揀要換嘅 items', true);
+  const me = allUsers[MY_PHONE];
+  const them = allUsers[tradeTarget];
+
+  const myFig = ALL_FIGS.find(f => f.id === tradePicks.myOffer);
+  const theirFig = ALL_FIGS.find(f => f.id === tradePicks.theirOffer);
+
+  db.ref('requests').push({
+    from: MY_PHONE,
+    to: tradeTarget,
+    from_name: me.name,
+    to_name: them.name,
+    from_gives: {id: tradePicks.myOffer, name: myFig.name, img: myFig.img},
+    to_gives: {id: tradePicks.theirOffer, name: theirFig.name, img: theirFig.img},
+    status: 'pending',
+    created_at: Date.now()
+  }).then(() => {
+    closeTrade();
+    toast('✅ 換貨請求已發送！');
+  }).catch(() => toast('Error', true));
+}
+
+// ── Requests View ──
+function renderRequests() {
+  const el = document.getElementById('tabRequests');
+  const reqs = Object.entries(allRequests).sort((a,b) => b[1].created_at - a[1].created_at);
+
+  if (!reqs.length) { el.innerHTML = '<div class="no-data">未有換貨請求</div>'; return; }
+
+  el.innerHTML = reqs.map(([rid, r]) => {
+    const isToMe = r.to === MY_PHONE;
+    const isFromMe = r.from === MY_PHONE;
+    const statusLabel = {pending:'⏳ 等緊回覆', accepted:'✅ 已接受', rejected:'❌ 已拒絕'}[r.status] || r.status;
+
+    let actionHtml = '';
+    if (r.status === 'pending' && isToMe) {
+      actionHtml = `<div class="r-actions">
+        <button class="btn-accept" onclick="acceptReq('${rid}')">✅ 接受換貨</button>
+        <button class="btn-reject" onclick="rejectReq('${rid}')">❌ 拒絕</button>
+      </div>`;
+    }
+
+    const fg = r.from_gives, tg = r.to_gives;
+    return `<div class="req-card">
+      <div class="r-header">
+        <span class="r-title">${r.from_name} ↔ ${r.to_name} · ${statusLabel}</span>
+        <span style="color:#555;font-size:0.7rem">${new Date(r.created_at).toLocaleDateString('zh-HK')}</span>
+      </div>
+      <div class="r-row">
+        <span class="r-label" style="color:#4ade80">${r.from_name} 出：</span>
+        <div class="r-items"><img src="${fg.img}" title="${fg.name}" onerror="this.style.display='none'"><span style="font-size:0.7rem;color:#aaa">${fg.name}</span></div>
+      </div>
+      <div class="r-row">
+        <span class="r-label" style="color:#4ade80">${r.to_name} 出：</span>
+        <div class="r-items"><img src="${tg.img}" title="${tg.name}" onerror="this.style.display='none'"><span style="font-size:0.7rem;color:#aaa">${tg.name}</span></div>
+      </div>
+      ${actionHtml}
+    </div>`;
+  }).join('');
+}
+
+function acceptReq(rid) {
+  const r = allRequests[rid];
+  if (!r || r.status !== 'pending' || r.to !== MY_PHONE) return;
+
+  // Update both users' trades
+  const fromUser = allUsers[r.from] || {};
+  const toUser = allUsers[r.to] || {};
+  const fromTrades = {...(fromUser.trades||{})};
+  const toTrades = {...(toUser.trades||{})};
+
+  // From user: the item they "出" is now gone (remove from trades)
+  delete fromTrades[r.from_gives.id];
+  // From user: the item they "徵" (received from to) is now fulfilled (remove from trades)
+  delete fromTrades[r.to_gives.id];
+
+  // To user: the item they "出" is now gone
+  delete toTrades[r.to_gives.id];
+  // To user: the item they "徵" is now fulfilled
+  delete toTrades[r.from_gives.id];
+
+  const updates = {};
+  updates['users/' + r.from + '/trades'] = fromTrades;
+  updates['users/' + r.to + '/trades'] = toTrades;
+  updates['requests/' + rid + '/status'] = 'accepted';
+
+  db.ref().update(updates).then(() => {
+    switchTab('summary');
+    toast('✅ 換貨完成！');
+  }).catch(() => toast('Error', true));
+}
+
+function rejectReq(rid) {
+  if (!confirm('確定拒絕？')) return;
+  db.ref('requests/' + rid + '/status').set('rejected').then(() => toast('已拒絕'));
+}
 
 // ── Build figure grids ──
 function buildFigGrids() {
   ['C','G','K'].forEach(side => {
     const grid = document.getElementById('figGrid'+side);
+    if (!grid) return;
     const setMap = {C:'side-c', G:'side-g', K:'kemono'};
     const figs = ALL_FIGS.filter(f => f.set === setMap[side]);
     grid.innerHTML = figs.map(f => {
@@ -187,44 +483,13 @@ function toggleFig(figId) {
   buildFigGrids();
 }
 
-// ── Summary ──
-function renderSummary() {
-  const el = document.getElementById('summary');
-  const users = Object.entries(allUsers);
-  if (!users.length) { el.innerHTML = '<div class="no-users">未有 trade list — 㩒下面 button 加入！</div>'; return; }
-
-  el.innerHTML = users.map(([key, u]) => {
-    const trades = u.trades || {};
-    const outFigs = ALL_FIGS.filter(f => trades[f.id] === '出');
-    const wantFigs = ALL_FIGS.filter(f => trades[f.id] === '徵');
-
-    return `<div class="user-card">
-      <div class="u-header">
-        <div><span class="u-name">${esc(u.name)}</span> <span class="u-contact">${esc(u.contact)}</span></div>
-        <div class="u-actions">
-          <button class="u-edit-btn" onclick="startEdit('${key}')">✏️ Edit</button>
-          <button class="u-del-btn" onclick="delUser('${key}','${escAttr(u.name)}')">🗑️</button>
-        </div>
-      </div>
-      <div class="u-section">
-        <div class="u-label out">📤 出（有多可換）</div>
-        <div class="u-imgs">${outFigs.length ? outFigs.map(f => `<img src="${f.img}" title="${f.name}" onerror="this.style.display='none'">`).join('') : '<span style="color:#444;font-size:0.75rem">—</span>'}</div>
-      </div>
-      <div class="u-section">
-        <div class="u-label want">📥 徵（想換入）</div>
-        <div class="u-imgs">${wantFigs.length ? wantFigs.map(f => `<img src="${f.img}" title="${f.name}" onerror="this.style.display='none'">`).join('') : '<span style="color:#444;font-size:0.75rem">—</span>'}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
 // ── Edit ──
 function startAdd() {
   editMode = null;
   selections = {};
   document.getElementById('editName').value = '';
-  document.getElementById('editContact').value = '';
-  document.getElementById('editTitle').textContent = '📝 你嘅 Trade List（用電話做識別）';
+  document.getElementById('editContact').value = MY_PHONE || '';
+  document.getElementById('editTitle').textContent = '📝 你嘅 Trade List';
   showEdit();
 }
 function startEdit(key) {
@@ -252,19 +517,18 @@ function saveUser() {
   if (!name) return toast('請填名', true);
   if (!contact) return toast('請填電話', true);
 
-  // Normalize phone as key (strip spaces, dashes)
   const phoneKey = contact.replace(/[\s\-()]/g, '');
 
-  // Clean: only save non-null selections
   const trades = {};
   Object.entries(selections).forEach(([k,v]) => { if (v) trades[k] = v; });
 
   if (editMode && editMode !== phoneKey) {
-    // Phone changed — delete old record
     db.ref('users/' + editMode).remove();
   }
-  db.ref('users/' + phoneKey).set({name, contact: phoneKey, trades});
-  cancelEdit(); toast('✅ Saved!');
+  db.ref('users/' + phoneKey).set({name, contact: phoneKey, trades}).then(() => {
+    localStorage.setItem('lt_my_phone', phoneKey);
+    cancelEdit(); toast('✅ Saved!');
+  });
 }
 
 function delUser(key, name) {
@@ -273,12 +537,16 @@ function delUser(key, name) {
   toast('🗑️ Deleted');
 }
 
+// ── Helpers ──
 function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function escAttr(s) { return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 function toast(msg, isErr) {
   const t = document.getElementById('toast'); t.textContent = msg;
   t.className = 'toast show' + (isErr?' error':''); setTimeout(()=>t.classList.remove('show'), 2500);
 }
+
+// init
+refreshAll();
 </script>
 </body>
 </html>
